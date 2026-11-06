@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Amnezia modification: backported RACK flight accounting from
+// https://github.com/google/gvisor/pull/15432. See NOTICE-AMNEZIA.
+
 package tcp
 
 import (
@@ -414,6 +417,8 @@ func (rc *rackControl) reorderTimerExpired() {
 // +checklocks:rc.snd.ep.mu
 func (rc *rackControl) DoRecovery(_ *segment, fastRetransmit bool) {
 	snd := rc.snd
+	// Loss detection has updated RACK marks since the ACK's first SetPipe.
+	snd.SetPipe()
 	if fastRetransmit {
 		snd.resendSegment()
 	}

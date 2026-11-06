@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Amnezia modification: backported RACK flight accounting from
+// https://github.com/google/gvisor/pull/15432. See NOTICE-AMNEZIA.
+
 package tcp
 
 import (
@@ -144,6 +147,8 @@ func (s *segment) clone() *segment {
 	t.rcvdTime = s.rcvdTime
 	t.xmitTime = s.xmitTime
 	t.xmitCount = s.xmitCount
+	t.acked = s.acked
+	t.lost = s.lost
 	t.ep = s.ep
 	t.qFlags = s.qFlags
 	t.dataMemSize = s.dataMemSize

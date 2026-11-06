@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Amnezia modification: backported RACK flight accounting from
+// https://github.com/google/gvisor/pull/15432. See NOTICE-AMNEZIA.
+
 package tcp
 
 import (
@@ -421,6 +424,9 @@ func (s *sender) resendSegment() {
 		s.FastRecovery.HighRxt = seg.sequenceNumber.Add(seqnum.Size(seg.payloadSize())) - 1
 		s.FastRecovery.RescueRxt = seg.sequenceNumber.Add(seqnum.Size(seg.payloadSize())) - 1
 		s.sendSegment(seg)
+		if s.writeNext == seg {
+			s.updateWriteNext(seg.Next())
+		}
 		s.ep.stack.Stats().TCP.FastRetransmit.Increment()
 		s.ep.stats.SendErrors.FastRetransmit.Increment()
 
@@ -1092,7 +1098,7 @@ func (s *sender) SetPipe() {
 			// NOTE: here we mark the whole segment as lost. We do not try
 			// and test every byte in our write buffer as we maintain our
 			// pipe in terms of outstanding packets and not bytes.
-			if !s.ep.scoreboard.IsRangeLost(sb) {
+			if !s1.lost && !s.ep.scoreboard.IsRangeLost(sb) {
 				pipe++
 			}
 			// SetPipe():
