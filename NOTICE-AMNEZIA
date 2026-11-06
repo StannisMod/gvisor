@@ -1,0 +1,19 @@
+Amnezia TCP recovery backport (rack-flight-v1)
+
+Base upstream commit: 89a5d21be8f0440c78fa6bbc01f98e23021e7132
+Base module version: v0.0.0-20260122175437-89a5d21be8f0
+Proposal: https://github.com/google/gvisor/pull/15432
+Amnezia comparison and packet regressions:
+https://github.com/StannisMod/amnezia-client/tree/feature/connection-stability/native/routing
+
+Modified files: pkg/tcpip/transport/tcp/{snd.go,rack.go,segment.go}.
+Recompute the flight estimate after RACK loss marking, exclude lost copies,
+preserve loss/ACK flags on splits, and advance writeNext past fast repairs.
+No RTO limits, retry budgets or congestion-control selection are changed.
+The additional pkg/amnezia package exposes source/fix identifiers for build
+verification. It does not alter transport behaviour.
+
+This is a downstream backport of an open upstream proposal, not an assertion
+of completed upstream review. Original gVisor copyrights and Apache-2.0
+licensing remain in their source files and LICENSE. See the Amnezia tests
+and revision lock for the scope and limits of validation.
