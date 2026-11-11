@@ -53,3 +53,17 @@ func (e *endpoint) ProbeVerifiedPath(serial uint64) bool {
 	seg.xmitCount, seg.xmitTime, seg.lost = attempts, normalXmitTime, normalLost
 	return err == nil
 }
+
+// NeedsVerifiedPathProbe reports an outstanding payload in timeout recovery.
+// It is a read-only scheduling hint, not permission to retransmit. In
+// particular it does not consume a proof or change timers or retry accounting.
+func (e *endpoint) NeedsVerifiedPathProbe() bool {
+	e.LockUser()
+	defer e.UnlockUser()
+	s := e.snd
+	if s == nil || s.state != tcpip.RTORecovery || s.SndWnd == 0 || !s.resendTimer.enabled() {
+		return false
+	}
+	seg := s.writeList.Front()
+	return seg != nil && seg.sequenceNumber == s.SndUna && seg.payloadSize() > 0 && seg.payloadSize() <= s.MaxPayloadSize && seg.xmitCount >= 2
+}

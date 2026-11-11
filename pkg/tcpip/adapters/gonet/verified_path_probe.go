@@ -17,3 +17,13 @@ func (c *TCPConn) ProbeVerifiedPath(serial uint64) bool {
 	probe, ok := c.ep.(interface{ ProbeVerifiedPath(uint64) bool })
 	return ok && probe.ProbeVerifiedPath(serial)
 }
+
+// NeedsVerifiedPathProbe is a read-only hint used to stop path measurement
+// promptly once TCP has recovered or the connection has closed.
+func (c *TCPConn) NeedsVerifiedPathProbe() bool {
+	if c == nil || c.ep == nil {
+		return false
+	}
+	hint, ok := c.ep.(interface{ NeedsVerifiedPathProbe() bool })
+	return ok && hint.NeedsVerifiedPathProbe()
+}

@@ -17,6 +17,9 @@ type endpointWithoutPathProbe struct{ tcpip.Endpoint }
 
 func TestVerifiedPathProbeRejectsUnavailableEndpoint(t *testing.T) {
 	for _, c := range []*TCPConn{nil, {}, {ep: &endpointWithoutPathProbe{}}} {
+		if c.NeedsVerifiedPathProbe() {
+			t.Fatal("missing endpoint reported recovery")
+		}
 		if c.ProbeVerifiedPath(1) {
 			t.Fatal("missing path probe accepted")
 		}

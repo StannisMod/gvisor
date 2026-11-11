@@ -74,6 +74,16 @@ func TestVerifiedPathProbeRejectsUnsafeSenderStates(t *testing.T) {
 			}
 			attempts, normalTime, lost := seg.xmitCount, seg.xmitTime, seg.lost
 			rto, cwnd, deadline, lastSend := s.RTO, s.SndCwnd, s.resendTimer.target, s.LastSendTime
+			wantHint := name == "too-recent" || name == "rto-too-close" || name == "same-deadline" || name == "replayed-proof"
+			proofBefore := s.lastPathProof
+			for i := 0; i < 2; i++ {
+				if got := e.NeedsVerifiedPathProbe(); got != wantHint {
+					t.Fatalf("recovery hint=%v want=%v", got, wantHint)
+				}
+			}
+			if s.lastPathProof != proofBefore {
+				t.Fatal("read-only hint consumed proof")
+			}
 			if e.ProbeVerifiedPath(1) {
 				t.Fatal("unsafe state accepted probe")
 			}
