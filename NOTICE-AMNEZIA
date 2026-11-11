@@ -17,3 +17,18 @@ This is a downstream backport of an open upstream proposal, not an assertion
 of completed upstream review. Original gVisor copyrights and Apache-2.0
 licensing remain in their source files and LICENSE. See the Amnezia tests
 and revision lock for the scope and limits of validation.
+
+Optional host-verified path probe API (verified-path-probe-v1)
+
+ProbeVerifiedPath accepts a monotonic serial only after the transport owner
+has authenticated a sufficiently large, bidirectional challenge on the current
+path. The API does not authenticate the integer or generate a path proof.
+It permits at most one extra copy per armed RTO deadline in RTO recovery,
+without resetting cwnd, RTO, normal transmission metadata or retry budget.
+No automatic probing is enabled by adding this API. The sender's proof replay
+and deadline guards are included in StateSave/StateLoad.
+
+Normal package tests cover guard rejection, state round-trip, real packet ACK
+recovery, delayed ACKs after a lost probe, repeated proofs, and equal normal
+RTO budgets with and without lost early probes. Integration of the authenticated
+path signal remains the responsibility of the application/transport owner.

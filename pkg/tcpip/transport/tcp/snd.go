@@ -154,6 +154,10 @@ type sender struct {
 	// segment after entering an RTO for the first time as described in
 	// RFC3522 Section 3.2.
 	retransmitTS uint32
+
+	// Early path probes are separate from the normal retransmission budget.
+	lastPathProof         uint64
+	lastPathProbeDeadline tcpip.MonotonicTime
 }
 
 // rtt is a synchronization wrapper used to appease stateify. See the comment
