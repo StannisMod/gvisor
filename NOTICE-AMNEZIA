@@ -17,3 +17,5 @@ This is a downstream backport of an open upstream proposal, not an assertion
 of completed upstream review. Original gVisor copyrights and Apache-2.0
 licensing remain in their source files and LICENSE. See the Amnezia tests
 and revision lock for the scope and limits of validation.
+
+Optional verified-path-probe-v1 API permits at most one additional payload repair per armed RTO deadline after a host-authenticated, sufficiently large bidirectional path challenge. It preserves ordinary timeout, retry, congestion and loss accounting. NeedsVerifiedPathProbe is a read-only scheduling hint. The host must bind proofs to network generation and expiry and enforce aggregate limits.

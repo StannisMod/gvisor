@@ -184,6 +184,10 @@ type sender struct {
 	// corkTimer is used to drain the segments which are held when TCP_CORK
 	// option is enabled.
 	corkTimer timer `state:"nosave"`
+
+	// Verified path probe replay/rate guards; append for stable checkpoint indices.
+	lastPathProof         uint64
+	lastPathProbeDeadline tcpip.MonotonicTime
 }
 
 // protectedWriteList wraps the write list, checking for invalid state when

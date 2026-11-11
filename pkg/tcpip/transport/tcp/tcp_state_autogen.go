@@ -1068,6 +1068,8 @@ func (s *sender) StateFields() []string {
 		"spuriousRecovery",
 		"retransmitTS",
 		"startCork",
+		"lastPathProof",
+		"lastPathProbeDeadline",
 	}
 }
 
@@ -1093,6 +1095,8 @@ func (s *sender) StateSave(stateSinkObject state.Sink) {
 	stateSinkObject.Save(14, &s.spuriousRecovery)
 	stateSinkObject.Save(15, &s.retransmitTS)
 	stateSinkObject.Save(16, &s.startCork)
+	stateSinkObject.Save(17, &s.lastPathProof)
+	stateSinkObject.Save(18, &s.lastPathProbeDeadline)
 }
 
 func (s *sender) afterLoad(context.Context) {}
@@ -1116,6 +1120,8 @@ func (s *sender) StateLoad(ctx context.Context, stateSourceObject state.Source) 
 	stateSourceObject.Load(14, &s.spuriousRecovery)
 	stateSourceObject.Load(15, &s.retransmitTS)
 	stateSourceObject.Load(16, &s.startCork)
+	stateSourceObject.Load(17, &s.lastPathProof)
+	stateSourceObject.Load(18, &s.lastPathProbeDeadline)
 }
 
 func (wl *protectedWriteList) StateTypeName() string {
